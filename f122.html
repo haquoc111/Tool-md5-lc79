@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MD5 ROBOT - lc79b.bet</title>
+    <style>
+        /* Toàn màn hình cho iframe game */
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background: #000;
+        }
+        #gameFrame {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+            z-index: 1;
+        }
+        /* Lớp che phủ khi game bị chặn iframe */
+        #fallbackMessage {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0,0,0,0.85);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            z-index: 9999;
+            text-align: center;
+            font-family: 'Segoe UI', Arial, sans-serif;
+        }
+        #fallbackMessage a {
+            color: #00f2ff;
+            font-weight: bold;
+        }
+        /* Style bổ sung cho nút ẩn/hiện (sẽ được script chèn vào) */
+        .minimized #botBody {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Game lc79b.bet toàn màn hình -->
+    <iframe id="gameFrame" src="http://lc79b.bet" allow="autoplay" sandbox="allow-scripts allow-same-origin allow-popups allow-forms"></iframe>
+
+    <!-- Fallback nếu iframe không load được -->
+    <div id="fallbackMessage">
+        <h2>⚠️ Không thể nhúng game</h2>
+        <p>Trang web có thể chặn hiển thị trong iframe.</p>
+        <button onclick="window.open('http://lc79b.bet', '_blank')" 
+                style="padding:12px 24px; background:#ff00aa; border:none; color:white; font-weight:bold; border-radius:8px; cursor:pointer;">
+            MỞ GAME TAB RIÊNG
+        </button>
+    </div>
+
+    <!-- ========== CODE GỐC TỪ FILE .txt GIỮ NGUYÊN 100% ========== -->
+    <script>
+    (function () {
+      if (document.getElementById("md5RobotV3")) return;
+
+      // --- BẠN DÁN 5 LINK NHẠC ĐÃ COPY VÀO ĐÂY ---
+      const myPlaylist = [
+        { name: "Nhạc Phiên 1", url: "https://s186.convertio.me/p/XlYmhfsa9lLJho-1I_9dWA/2e057faa9a92737cb0699c8ee4f01936/v14044g50000d7mblkfog65olbee8fa0.mp3" },
+        { name: "Nhạc Phiên 2", url: "https://s184.convertio.me/p/0n7MQUS8RduhDvua4Vt2Rw/2e057faa9a92737cb0699c8ee4f01936/v14025g50000d6tleofog65orh9tplrg.mp3" },
+        { name: "Nhạc Phiên 3", url: "https://s178.convertio.me/p/AjgyvdN5yS4c0h6ON3getg/2e057faa9a92737cb0699c8ee4f01936/v24044gl0000d5pc0cvog65i9vnj1p2g.mp3" },
+        { name: "Nhạc Phiên 4", url: "https://s179.convertio.me/p/N89x4Z5ojG7aZPnGalBX6A/2e057faa9a92737cb0699c8ee4f01936/v14044g50000d4uf5m7og65ul5hdf4i0.mp3"},
+        { name: "Nhạc Phiên 5", url: "https://s186.convertio.me/p/PZNhbgUTA9QXOe5BB6gyzg/2e057faa9a92737cb0699c8ee4f01936/v1c044g50000d34jhkfog65kdiuja7l0_2.mp3" }
+      ];
+
+      let currentIdx = 0;
+      const botAudio = new Audio();
+      
+      // Tạo Robot Giao diện Cyberpunk
+      const bot = document.createElement("div");
+      bot.id = "md5RobotV3";
+      bot.innerHTML = `
+        <div id="botHeader">
+          <div class="bot-status-light"></div>
+          <span style="font-weight:bold; text-shadow: 0 0 5px #fff;">MD5 MASTER BOT</span>
+          <button id="closeBot">×</button>
+        </div>
+        <div id="botBody">
+          <div class="music-player-zone">
+            <div id="songTitle">Vui lòng bấm Play</div>
+            <div class="controls">
+              <button id="btnPrev">⏮</button>
+              <button id="btnPlay">▶️</button>
+              <button id="btnNext">⏭</button>
+            </div>
+          </div>
+
+          <div class="analysis-zone">
+            <input id="md5Input" placeholder="Nhập mã MD5 phiên..." />
+            <button id="btnAnalyze">QUÉT THUẬT TOÁN</button>
+          </div>
+
+          <div id="resultDisplay">
+            <div id="textResult">-- --</div>
+            <div id="textConfidence">Độ tin cậy: 0%</div>
+            <div id="textAdvice">Chờ dữ liệu MD5...</div>
+          </div>
+        </div>
+      `;
+
+      document.body.appendChild(bot);
+
+      // --- STYLE ROBOT ---
+      const style = document.createElement("style");
+      style.innerHTML = `
+        #md5RobotV3 {
+          position: fixed; top: 20px; left: 20px; width: 320px;
+          background: rgba(15, 15, 25, 0.98); color: #00f2ff;
+          border: 2px solid #ff00aa; border-radius: 15px; z-index: 2147483647;
+          font-family: 'Segoe UI', Arial, sans-serif; box-shadow: 0 0 30px rgba(255, 0, 170, 0.6);
+        }
+        #botHeader {
+          padding: 15px; background: linear-gradient(90deg, #ff00aa, #7000ff);
+          display: flex; justify-content: space-between; align-items: center;
+          cursor: move; border-radius: 12px 12px 0 0; color: white;
+        }
+        .bot-status-light { width: 12px; height: 12px; background: #00f2ff; border-radius: 50%; box-shadow: 0 0 10px #00f2ff; animation: blink 1.5s infinite; }
+        @keyframes blink { 50% { opacity: 0.3; } }
+        
+        #botBody { padding: 20px; }
+        .music-player-zone { background: #000; padding: 10px; border-radius: 10px; margin-bottom: 15px; border: 1px solid #333; }
+        #songTitle { font-size: 11px; color: #ff00aa; margin-bottom: 8px; text-align: center; height: 15px; overflow: hidden; }
+        .controls { display: flex; justify-content: center; gap: 15px; }
+        .controls button { background: none; border: 1px solid #444; color: white; cursor: pointer; padding: 5px 10px; border-radius: 5px; }
+        .controls button:hover { border-color: #ff00aa; background: rgba(255,0,170,0.1); }
+
+        .analysis-zone input {
+          width: 100%; padding: 12px; background: #050505; border: 1px solid #00f2ff;
+          color: #fff; border-radius: 8px; box-sizing: border-box; outline: none; margin-bottom: 10px;
+        }
+        #btnAnalyze {
+          width: 100%; padding: 12px; background: #ff00aa; border: none; color: white;
+          font-weight: bold; border-radius: 8px; cursor: pointer; transition: 0.3s;
+        }
+        #btnAnalyze:hover { background: #00f2ff; color: #000; }
+
+        #resultDisplay {
+          margin-top: 15px; text-align: center; background: rgba(0,0,0,0.5);
+          padding: 15px; border-radius: 10px; border: 1px solid #222;
+        }
+        #textResult { font-size: 32px; font-weight: bold; margin-bottom: 5px; }
+        #textConfidence { font-size: 14px; color: #00f2ff; }
+        #textAdvice { font-size: 12px; color: #888; margin-top: 5px; }
+        #closeBot { background: none; border: none; color: white; font-size: 20px; cursor: pointer; }
+      `;
+      document.head.appendChild(style);
+
+      // --- LOGIC NHẠC ---
+      function playSong(index) {
+        if(!myPlaylist[index].url.startsWith("http")) {
+            alert("Bạn chưa thay Link nhạc vào code rồi!");
+            return;
+        }
+        botAudio.src = myPlaylist[index].url;
+        document.getElementById("songTitle").innerText = "正在播放: " + myPlaylist[index].name;
+        botAudio.play().catch(() => alert("Hãy click vào màn hình web 1 lần rồi bấm Play lại!"));
+      }
+
+      document.getElementById("btnPlay").onclick = () => {
+        if (botAudio.paused) {
+          if (!botAudio.src) playSong(currentIdx);
+          else botAudio.play();
+          document.getElementById("btnPlay").innerText = "⏸";
+        } else {
+          botAudio.pause();
+          document.getElementById("btnPlay").innerText = "▶️";
+        }
+      };
+
+      document.getElementById("btnNext").onclick = () => {
+        currentIdx = (currentIdx + 1) % myPlaylist.length;
+        playSong(currentIdx);
+        document.getElementById("btnPlay").innerText = "⏸";
+      };
+
+      document.getElementById("btnPrev").onclick = () => {
+        currentIdx = (currentIdx - 1 + myPlaylist.length) % myPlaylist.length;
+        playSong(currentIdx);
+        document.getElementById("btnPlay").innerText = "⏸";
+      };
+
+      // --- LOGIC DI CHUYỂN ---
+      let drag = false, ox, oy;
+      document.getElementById("botHeader").onmousedown = (e) => {
+        drag = true; ox = e.clientX - bot.offsetLeft; oy = e.clientY - bot.offsetTop;
+      };
+      document.onmouseup = () => drag = false;
+      document.onmousemove = (e) => {
+        if (drag) {
+          bot.style.left = e.clientX - ox + "px";
+          bot.style.top = e.clientY - oy + "px";
+        }
+      };
+
+      document.getElementById("closeBot").onclick = () => {
+          botAudio.pause();
+          bot.remove();
+      };
+
+      // --- THUẬT TOÁN MD5 PHÂN TÍCH TÀI XỈU ---
+      document.getElementById("btnAnalyze").onclick = () => {
+        const val = document.getElementById("md5Input").value.trim();
+        if (val.length < 10) return alert("Mã MD5 không hợp lệ!");
+
+        let sum = 0, e = 0, o = 0;
+        // Thuật toán: Quét các ký tự Hexadecimal
+        for (let i = 0; i < val.length; i++) {
+          let charVal = parseInt(val[i], 16);
+          if (!isNaN(charVal)) {
+            sum += charVal;
+            if (charVal % 2 === 0) e++; else o++;
+          }
+        }
+
+        const resText = sum % 2 === 0 ? "TÀI" : "XỈU";
+        const diff = Math.abs(e - o);
+        const conf = Math.min(97, 50 + (diff * 8));
+
+        const resEl = document.getElementById("textResult");
+        resEl.innerText = resText;
+        resEl.style.color = resText === "TÀI" ? "#ff00aa" : "#00f2ff";
+        
+        document.getElementById("textConfidence").innerText = "Độ tin cậy: " + conf + "%";
+        document.getElementById("textAdvice").innerText = conf > 80 ? "🔥 Robot báo: Cầu cực đẹp!" : "👉 Robot báo: Đánh nhẹ tay";
+        
+        // Hiệu ứng robot quét
+        bot.style.boxShadow = "0 0 50px #ff00aa";
+        setTimeout(() => bot.style.boxShadow = "0 0 30px rgba(255, 0, 170, 0.6)", 500);
+      };
+    })();
+    </script>
+
+    <!-- ========== BỔ SUNG NÚT ẨN/HIỆN (KHÔNG SỬA CODE GỐC) ========== -->
+    <script>
+    (function enhanceRobot() {
+        // Chờ robot được tạo xong (nó chạy đồng bộ trước đó)
+        const header = document.querySelector('#md5RobotV3 #botHeader');
+        if (!header) return;
+        
+        // Tạo nút ẩn/hiện
+        const minimizeBtn = document.createElement('button');
+        minimizeBtn.id = 'btnMinimize';
+        minimizeBtn.textContent = '━';
+        minimizeBtn.style.cssText = 'background:none;border:none;color:white;font-size:18px;cursor:pointer;margin-right:8px;';
+        
+        // Chèn vào trước nút close
+        const closeBtn = document.getElementById('closeBot');
+        if (closeBtn) {
+            header.insertBefore(minimizeBtn, closeBtn);
+        } else {
+            header.appendChild(minimizeBtn);
+        }
+        
+        // Gán sự kiện ẩn/hiện
+        const robot = document.getElementById('md5RobotV3');
+        minimizeBtn.addEventListener('click', function() {
+            robot.classList.toggle('minimized');
+        });
+    })();
+    </script>
+
+    <!-- Kiểm tra iframe bị chặn (nếu có) -->
+    <script>
+    document.getElementById('gameFrame').onerror = function() {
+        document.getElementById('fallbackMessage').style.display = 'block';
+    };
+    // Đợi 3 giây nếu iframe không load thì hiện fallback
+    setTimeout(function() {
+        const iframe = document.getElementById('gameFrame');
+        // Kiểm tra đơn giản: nếu iframe vẫn trắng hoặc không có nội dung
+        try {
+            if (iframe.contentDocument && iframe.contentDocument.body.innerHTML.trim() === '') {
+                document.getElementById('fallbackMessage').style.display = 'block';
+            }
+        } catch(e) {
+            // Lỗi cross-origin chứng tỏ iframe đã load thành công từ domain khác
+        }
+    }, 5000);
+    </script>
+</body>
+</html>
